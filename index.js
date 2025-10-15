@@ -1,12 +1,14 @@
-exports.httpEntry = (req, res) => {
-    res.set('Access-Control-Allow-Origin', '*');
-    res.set('Access-Control-Allow-Headers', 'Content-Type');
-    res.set('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-    if (req.method === 'OPTIONS') return res.status(204).send('');
-    const name = req.query.name || (req.body && req.body.name) || 'world';
-    res.status(200).json({
-        hello: name,
-        runtime: 'nodejs',
-        region: process.env.GCP_REGION || 'unknown'
-    });
-};
+const http = require('http');
+
+const port = process.env.PORT || 3000;
+
+const server = http.createServer((req, res) => {
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'text/plain');
+  
+  res.end('Hello from Render!\n');
+});
+
+server.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
