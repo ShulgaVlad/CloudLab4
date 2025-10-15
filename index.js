@@ -9,7 +9,7 @@ const server = http.createServer((req, res) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
 
     if (req.method === 'OPTIONS') {
-        res.writeHead(204); // Статус 204 No Content
+        res.writeHead(204);
         res.end();
         return;
     }
