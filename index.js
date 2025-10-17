@@ -1,8 +1,3 @@
-const http = require('http');
-const url = require('url');
-
-const port = process.env.PORT || 3000;
-
 const server = http.createServer((req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -27,6 +22,3 @@ const server = http.createServer((req, res) => {
     res.end(JSON.stringify(responseObject));
 });
 
-server.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-});
