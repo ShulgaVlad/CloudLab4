@@ -1,32 +1,44 @@
-const http = require('http');
-const url = require('url');
+const express = require('express');
 
-const port = process.env.PORT || 3000;
+const app = express();
 
-const server = http.createServer((req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+const PORT = process.env.PORT || 3000;
 
-    if (req.method === 'OPTIONS') {
-        res.writeHead(204);
-        res.end();
-        return;
-    }
+const REGION = process.env.GCP_REGION || 'unknown';
 
-    const parsedUrl = url.parse(req.url, true);
-    const name = parsedUrl.query.name || 'world';
+app.use(express.json());
 
-    const responseObject = {
-        hello: name,
-        runtime: 'nodejs',
-        region: process.env.GCP_REGION || 'unknown'
-    };
-    
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(responseObject));
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end();
+  }
+  next();
 });
 
-server.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+app.all('/', (req, res) => {
+  let guestName = 'world';
+  if (req.query && req.query.name) {
+    guestName = req.query.name;
+  } 
+  else if (req.method === 'POST') {
+    if (req.body && req.body.name) {
+      guestName = req.body.name;
+    }
+  }
+
+  const responsePayload = {
+    hello: guestName,
+    runtime: 'nodejs',
+    region: REGION
+  };
+
+  res.status(200).json(responsePayload);
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
